@@ -24,6 +24,14 @@ struct Login {
     password: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+struct Location {
+    id: i32,
+    name: String,
+    x_coord: i32,
+    y_coord: i32,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut session = Session::LoggedOut;
@@ -107,7 +115,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         let resp = client.get(format!("{}{}", server_url, "/locations.json"))
                             .send()
                             .await?
-                            .json::<HashMap<String, String>>()
+                            .json::<Vec<Location>>()
                             .await?;
                         println!("{:#?}", resp);
                     }
