@@ -1,8 +1,12 @@
+mod session;
+use session::Session;
+// use session::create_from_user_input;
+
 use std::io;
-use std::collections::HashMap;
+// use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
-use reqwest::Client;
-use reqwest::StatusCode;
+// use reqwest::Client;
+// use reqwest::StatusCode;
 use reqwest::header;
 
 enum Command {
@@ -11,17 +15,6 @@ enum Command {
     Players,
     Exit,
     Undefined,
-}
-
-enum Session {
-    LoggedIn { token: String },
-    LoggedOut,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Login {
-    email: String,
-    password: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -34,50 +27,20 @@ struct Location {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut session = Session::LoggedOut;
+    let mut current_session = Session::LoggedOut;
     let server_url = "https://lq-space.herokuapp.com";
     loop {
-        match &session {
+        match &current_session {
             Session::LoggedOut => {
-                let mut email = String::new();
-                let mut password = String::new();
-                println!("Welcome to Space Hauler!");
-                println!("Enter your login email");
-                io::stdin()
-                    .read_line(&mut email)
-                    .expect("Failed to read line");
-                println!("Enter your login password");
-                io::stdin()
-                    .read_line(&mut password)
-                    .expect("Failed to read line");
-                println!("Logging in {:?} {:?} !", email, password);
-                let client = Client::new();
-                let login = Login {
-                    email: email.trim().to_string(),
-                    password: password.trim().to_string(),
-                };
-                let req = client.post(format!("{}{}", server_url, "/sessions.json"))
-                    .json(&login)
-                    .send()
-                    .await?;
-                match req.status() {
-                    StatusCode::OK => {
-                        let resp = req.json::<HashMap<String, String>>().await?;
-                        match resp.get("token") {
-                            Some(token) => {
-                                session = Session::LoggedIn { token: token.to_string() };
-                                println!("Logged In!");
-                            }
-                            None => {
-                                println!("Unable to login");
-                                println!("{:#?}", resp);
-                            }
-                        };
+                let result = session::create_from_user_input(server_url).await;
+                match result {
+                    Ok(session) => {
+                        current_session = session;
                     }
-                    _ => {
-                        println!("Server status was {}", req.status());
+                    Err(e) => {
+                        println!("Problems");
                     }
-                };
+                }
             }
             Session::LoggedIn { ref token } => {
                 let mut user_input = String::new();
