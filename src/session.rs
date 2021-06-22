@@ -56,19 +56,18 @@ pub async fn create_from_user_input(server_url: &str) -> Result<Session, &str> {
                         }
                         Err(e) => {
                             println!("Problem logging in.");
-                            Err("hello")
+                            Err("Problem loggin in.")
                         }
                     }
                 }
                 _ => {
-                    Err("hello")
-                    // Err(format!("Server status was {}", req.status()))
+                    Err("Problem loggin in.")
                 }
             }
         }
         Err(e) => {
             println!("Problem logging in.");
-            Err("hello")
+            Err("Problem loggin in.")
         }
     }
 }
