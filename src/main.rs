@@ -110,7 +110,13 @@ impl fmt::Display for Team {
 #[derive(Deserialize, Debug)]
 struct Players {
     #[serde(flatten)]
-    players: HashMap<String, Player>,
+    wrapped_players: HashMap<String, Player>,
+}
+
+impl Players {
+    fn players(&self) -> Vec<&Player> {
+        return self.wrapped_players.values().collect();
+    }
 }
 
 #[derive(Table, Deserialize, Debug)]
@@ -330,7 +336,7 @@ mod tests {
 
         // Prints deserialized = Point { x: 1, y: 2 }
         println!("Hello!");
-        println!("deserialized = {:?}", deserialized.players);
+        println!("deserialized = {:?}", deserialized.players());
         assert_eq!(2 + 2, 4);
     }
 }
