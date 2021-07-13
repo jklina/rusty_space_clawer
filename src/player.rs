@@ -24,9 +24,8 @@ pub struct Player {
     id: i32,
     active: bool,
     callsign: String,
-    #[serde(skip)]
     #[table(skip)]
-    contracts: HashMap<String, Contract>,
+    contracts: Vec<Contract>,
     last_active: SpaceTime,
     money: f32,
     ship: Ship,

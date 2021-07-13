@@ -32,38 +32,23 @@ pub async fn create_from_user_input(server_url: &str) -> Result<Session, &str> {
     let req = client.post(format!("{}{}", server_url, "/sessions.json"))
         .json(&login)
         .send()
-        .await;
-    match req {
-        Ok(req) => {
-            match req.status() {
-                reqwest::StatusCode::OK => {
-                    let resp = req.json::<HashMap<String, String>>().await;
-                    match resp {
-                        Ok(resp) => {
-                            match resp.get("token") {
-                                Some(token) => {
-                                    println!("Logged In!");
-                                    return Ok(Session::LoggedIn { token: token.to_string() });
-                                }
-                                None => {
-                                    return Err("Unable to login");
-                                }
-                            };
-                        }
-                        Err(e) => {
-                            println!("Problem logging in.");
-                            Err("Problem loggin in.")
-                        }
-                    }
+        .await
+        .unwrap();
+    match req.status() {
+        reqwest::StatusCode::OK => {
+            let resp = req.json::<HashMap<String, String>>().await.unwrap();
+            match resp.get("token") {
+                Some(token) => {
+                    println!("Logged In!");
+                    return Ok(Session::LoggedIn { token: token.to_string() });
                 }
-                _ => {
-                    Err("Problem loggin in.")
+                None => {
+                    return Err("There was a problem fetching the token.");
                 }
-            }
+            };
         }
-        Err(e) => {
-            println!("Problem logging in.");
-            Err("Problem loggin in.")
+        _ => {
+            Err("Unexpected response from server.")
         }
     }
 }

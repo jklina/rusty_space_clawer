@@ -11,7 +11,6 @@ use player::Players;
 use location::Location;
 use session::Session;
 use std::io;
-use std::collections::HashMap;
 use reqwest::header;
 use cli_table::{print_stdout, WithTitle};
 
@@ -22,7 +21,6 @@ enum Command {
     Exit,
     Undefined,
 }
-
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -37,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         current_session = session;
                     }
                     Err(e) => {
-                        println!("Problems");
+                        println!("There was a problem logging in: {}", e);
                     }
                 }
             }
@@ -85,9 +83,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         let resp = client.get(format!("{}{}", server_url, "/contracts.json"))
                             .send()
                             .await?
-                            .json::<HashMap<String, Contract>>()
+                            .json::<Vec<Contract>>()
                             .await?;
-                        print_stdout(resp.values().with_title()).expect("Failed to fetch contracts");
+                        print_stdout(resp.with_title()).expect("Failed to fetch players");
                     }
                     Command::Players => {
                         println!("Players:");
@@ -96,6 +94,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         //     .await?
                         //     .text()
                         //     .await?;
+                        // println!("{}", resp);
                         let resp = client.get(format!("{}{}", server_url, "/players.json"))
                             .send()
                             .await?
