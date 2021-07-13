@@ -1,8 +1,4 @@
-// use std::io;
-// use reqwest::Client;
-// use reqwest::StatusCode;
 use std::collections::HashMap;
-// use serde::{Serialize, Deserialize};
 
 pub enum Session {
     LoggedIn { token: String },
