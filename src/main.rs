@@ -6,10 +6,12 @@ mod ship;
 mod space_time;
 mod location;
 mod string_option;
+mod post_command;
 use contract::Contract;
 use player::Players;
 use location::Location;
 use session::Session;
+use post_command::PostCommand;
 use std::io;
 use reqwest::header;
 use cli_table::{print_stdout, WithTitle};
@@ -18,6 +20,15 @@ enum Command {
     Locations,
     Contracts,
     Players,
+    Launch,
+    LoadCargo,
+    UnloadCargo,
+    Refuel,
+    Stop,
+    EmergencyStop,
+    SelfDestruct,
+    Jettison,
+    Dock,
     Exit,
     Undefined,
 }
@@ -62,6 +73,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             "locations" => Command::Locations,
                             "contracts" => Command::Contracts,
                             "players" => Command::Players,
+                            "launch" => Command::Launch,
+                            "load_cargo" => Command::LoadCargo,
+                            "unload_cargo" => Command::UnloadCargo,
+                            "refuel" => Command::Refuel,
+                            "stop" => Command::Stop,
+                            "emergency_stop" => Command::EmergencyStop,
+                            "self_destruct" => Command::SelfDestruct,
+                            "jettison" => Command::Jettison,
+                            "dock" => Command::Dock,
                             "exit" => Command::Exit,
                             _ => Command::Undefined,
                         }
@@ -101,6 +121,51 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             .json::<Players>()
                             .await?;
                         print_stdout(resp.players().with_title()).expect("Failed to fetch players");
+                    }
+                    Command::Launch => {
+                        let command = String::from("launch");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::LoadCargo => {
+                        let command = String::from("load_cargo");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::UnloadCargo => {
+                        let command = String::from("unload_cargo");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::Refuel => {
+                        let command = String::from("refuel");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::Stop => {
+                        let command = String::from("stop");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::EmergencyStop => {
+                        let command = String::from("emergency_stop");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::SelfDestruct => {
+                        let command = String::from("self_destruct");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::Jettison => {
+                        let command = String::from("jettison");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::Dock => {
+                        let command = String::from("dock");
+                        let resp = PostCommand::send(command, client, server_url);
+                        println!("{}", resp.await.unwrap());
                     }
                     Command::Undefined => {
                         println!("Unknown!");
