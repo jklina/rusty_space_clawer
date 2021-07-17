@@ -120,12 +120,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                     Command::Players => {
                         println!("Players:");
-                        // let resp = client.get(format!("{}{}", server_url, "/players.json"))
-                        //     .send()
-                        //     .await?
-                        //     .text()
-                        //     .await?;
-                        // println!("{}", resp);
                         let resp = client.get(format!("{}{}", server_url, "/players.json"))
                             .send()
                             .await?
