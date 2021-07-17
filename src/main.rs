@@ -29,6 +29,9 @@ enum Command {
     SelfDestruct,
     Jettison,
     Dock,
+    AcceptContract(String),
+    AbortContract(String),
+    PlotCourse(String),
     Exit,
     Undefined,
 }
@@ -86,6 +89,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             _ => Command::Undefined,
                         }
                     },
+                    2 => {
+                        match &parsed_user_input[0][..] {
+                            "accept_contract" => Command::AcceptContract(parsed_user_input[1].to_string()),
+                            "abort_contract" => Command::AbortContract(parsed_user_input[1].to_string()),
+                            "plot_course" => Command::PlotCourse(parsed_user_input[1].to_string()),
+                            _ => Command::Undefined,
+                        }
+                    },
                     _ => Command::Undefined,
                 };
                 match command {
@@ -124,47 +135,62 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                     Command::Launch => {
                         let command = String::from("launch");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::LoadCargo => {
                         let command = String::from("load_cargo");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::UnloadCargo => {
                         let command = String::from("unload_cargo");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::Refuel => {
                         let command = String::from("refuel");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::Stop => {
                         let command = String::from("stop");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::EmergencyStop => {
                         let command = String::from("emergency_stop");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::SelfDestruct => {
                         let command = String::from("self_destruct");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::Jettison => {
                         let command = String::from("jettison");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::Dock => {
                         let command = String::from("dock");
-                        let resp = PostCommand::send(command, client, server_url);
+                        let resp = PostCommand::send(command, None, client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::AcceptContract(contract_number) => {
+                        let command = String::from("accept_contract");
+                        let resp = PostCommand::send(command, Some(contract_number), client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::AbortContract(contract_number) => {
+                        let command = String::from("abort_contract");
+                        let resp = PostCommand::send(command, Some(contract_number), client, server_url);
+                        println!("{}", resp.await.unwrap());
+                    }
+                    Command::PlotCourse(course_string) => {
+                        let command = String::from("plot_course");
+                        let resp = PostCommand::send(command, Some(course_string), client, server_url);
                         println!("{}", resp.await.unwrap());
                     }
                     Command::Undefined => {
