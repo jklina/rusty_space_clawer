@@ -49,7 +49,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .expect("Failed to read line");
 
                 let parsed_user_input: Vec<&str> = user_input.trim().split(" ").collect();
-                // let arg_length = parsed_user_input.len();
                 let command_input = parsed_user_input[0];
                 let args = parsed_user_input.get(1);
                 match (command_input, args) {
