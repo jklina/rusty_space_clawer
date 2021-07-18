@@ -54,7 +54,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let args = parsed_user_input.get(1);
                 match (command_input, args) {
                     ("locations", None) => { 
-                        println!("Locations:");
                         let resp = client.get(format!("{}{}", server_url, "/locations.json"))
                             .send()
                             .await?
@@ -63,7 +62,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         print_stdout(resp.with_title()).expect("Failed to fetch locations");
                     },
                     ("contracts", None) => {
-                        println!("Contracts:");
                         let resp = client.get(format!("{}{}", server_url, "/contracts.json"))
                             .send()
                             .await?
@@ -73,7 +71,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     },
 
                     ("players", None) => {
-                        println!("Players:");
                         let resp = client.get(format!("{}{}", server_url, "/players.json"))
                             .send()
                             .await?

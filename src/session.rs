@@ -14,6 +14,7 @@ struct Login {
 pub async fn create_from_user_input(server_url: &str) -> Result<Session, &str> {
     let mut email = String::new();
     let mut password = String::new();
+
     println!("Welcome to Space Hauler!");
     println!("Enter your login email");
     std::io::stdin()
@@ -23,11 +24,13 @@ pub async fn create_from_user_input(server_url: &str) -> Result<Session, &str> {
     std::io::stdin()
         .read_line(&mut password)
         .expect("Failed to read line");
-    println!("Logging in {:?} {:?} !", email, password);
+    email = email.trim().to_string();
+    password = password.trim().to_string();
+    println!("Logging in {:?} !", email);
     let client = reqwest::Client::new();
     let login = Login {
-        email: email.trim().to_string(),
-        password: password.trim().to_string(),
+        email: email,
+        password: password,
     };
     let req = client.post(format!("{}{}", server_url, "/sessions.json"))
         .json(&login)
