@@ -16,26 +16,6 @@ use std::io;
 use reqwest::header;
 use cli_table::{print_stdout, WithTitle};
 
-enum Command {
-    Locations,
-    Contracts,
-    Players,
-    Launch,
-    LoadCargo,
-    UnloadCargo,
-    Refuel,
-    Stop,
-    EmergencyStop,
-    SelfDestruct,
-    Jettison,
-    Dock,
-    AcceptContract(String),
-    AbortContract(String),
-    PlotCourse(String),
-    Exit,
-    Undefined,
-}
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut current_session = Session::LoggedOut;
@@ -55,7 +35,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             Session::LoggedIn { ref token } => {
                 let mut user_input = String::new();
-                let command: Command;
                 let mut headers = header::HeaderMap::new();
                 let mut auth_value = header::HeaderValue::from_str(token).expect("invalid token");
                 auth_value.set_sensitive(true);
@@ -70,37 +49,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .expect("Failed to read line");
 
                 let parsed_user_input: Vec<&str> = user_input.trim().split(" ").collect();
-                command = match parsed_user_input.len() {
-                    1 => {
-                        match &parsed_user_input[0][..] {
-                            "locations" => Command::Locations,
-                            "contracts" => Command::Contracts,
-                            "players" => Command::Players,
-                            "launch" => Command::Launch,
-                            "load_cargo" => Command::LoadCargo,
-                            "unload_cargo" => Command::UnloadCargo,
-                            "refuel" => Command::Refuel,
-                            "stop" => Command::Stop,
-                            "emergency_stop" => Command::EmergencyStop,
-                            "self_destruct" => Command::SelfDestruct,
-                            "jettison" => Command::Jettison,
-                            "dock" => Command::Dock,
-                            "exit" => Command::Exit,
-                            _ => Command::Undefined,
-                        }
-                    },
-                    2 => {
-                        match &parsed_user_input[0][..] {
-                            "accept_contract" => Command::AcceptContract(parsed_user_input[1].to_string()),
-                            "abort_contract" => Command::AbortContract(parsed_user_input[1].to_string()),
-                            "plot_course" => Command::PlotCourse(parsed_user_input[1].to_string()),
-                            _ => Command::Undefined,
-                        }
-                    },
-                    _ => Command::Undefined,
-                };
-                match command {
-                    Command::Locations => {
+                // let arg_length = parsed_user_input.len();
+                let command_input = parsed_user_input[0];
+                let args = parsed_user_input.get(1);
+                match (command_input, args) {
+                    ("locations", None) => { 
                         println!("Locations:");
                         let resp = client.get(format!("{}{}", server_url, "/locations.json"))
                             .send()
@@ -108,8 +61,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             .json::<Vec<Location>>()
                             .await?;
                         print_stdout(resp.with_title()).expect("Failed to fetch locations");
-                    }
-                    Command::Contracts => {
+                    },
+                    ("contracts", None) => {
                         println!("Contracts:");
                         let resp = client.get(format!("{}{}", server_url, "/contracts.json"))
                             .send()
@@ -117,8 +70,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             .json::<Vec<Contract>>()
                             .await?;
                         print_stdout(resp.with_title()).expect("Failed to fetch players");
-                    }
-                    Command::Players => {
+                    },
+
+                    ("players", None) => {
                         println!("Players:");
                         let resp = client.get(format!("{}{}", server_url, "/players.json"))
                             .send()
@@ -126,73 +80,74 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             .json::<Players>()
                             .await?;
                         print_stdout(resp.players().with_title()).expect("Failed to fetch players");
-                    }
-                    Command::Launch => {
+                    },
+
+                    ("launch", None) => {
                         let command = String::from("launch");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::LoadCargo => {
+                    },
+                    ("load_cargo", None) => {
                         let command = String::from("load_cargo");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::UnloadCargo => {
+                    },
+                    ("unload_cargo", None) => {
                         let command = String::from("unload_cargo");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::Refuel => {
+                    },
+
+                    ("refuel", None) => {
                         let command = String::from("refuel");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::Stop => {
+                    },
+
+                    ("stop", None) => {
                         let command = String::from("stop");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::EmergencyStop => {
+                    },
+
+                    ("emergency_stop", None) => {
                         let command = String::from("emergency_stop");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::SelfDestruct => {
+                    },
+
+                    ("self_destruct", None) => {
                         let command = String::from("self_destruct");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::Jettison => {
+                    },
+                    ("jettison", None) => {
                         let command = String::from("jettison");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::Dock => {
+                    },
+                    ("dock", None) => {
                         let command = String::from("dock");
                         let resp = PostCommand::send(command, None, client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::AcceptContract(contract_number) => {
+                    },
+                    ("accept_contract", Some(args)) => {
                         let command = String::from("accept_contract");
-                        let resp = PostCommand::send(command, Some(contract_number), client, server_url);
+                        let resp = PostCommand::send(command, Some(args.to_string()), client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::AbortContract(contract_number) => {
+                    },
+                    ("abort_contract", Some(args)) => {
                         let command = String::from("abort_contract");
-                        let resp = PostCommand::send(command, Some(contract_number), client, server_url);
+                        let resp = PostCommand::send(command, Some(args.to_string()), client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::PlotCourse(course_string) => {
+                    },
+                    ("plot_course", Some(args)) => {
                         let command = String::from("plot_course");
-                        let resp = PostCommand::send(command, Some(course_string), client, server_url);
+                        let resp = PostCommand::send(command, Some(args.to_string()), client, server_url);
                         println!("{}", resp.await.unwrap());
-                    }
-                    Command::Undefined => {
-                        println!("Unknown!");
-                    }
-                    Command::Exit => {
-                        break;
-                    }
+                    },
+                    ("exit", None) => break,
+                    (_,_) => println!("Unknown command, try again!"),
                 };
             }
         }
