@@ -6,7 +6,7 @@ This is a simple example of a Rust client for the [Space Hauler](https://lq-spac
 
 for details.
 
-All commands are literally strings, no need to parse them as JSON before sending them. For example:
+All command arguments are literally strings, no need to parse them as JSON before sending them. For example:
 
 `plot_course [[10,10,1]]`
 
