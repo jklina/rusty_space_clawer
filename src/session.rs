@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use rpassword;
 
 pub enum Session {
     LoggedIn { token: String },
@@ -13,17 +14,15 @@ struct Login {
 
 pub async fn create_from_user_input(server_url: &str) -> Result<Session, &str> {
     let mut email = String::new();
-    let mut password = String::new();
 
     println!("Welcome to Space Hauler!");
     println!("Enter your login email");
     std::io::stdin()
         .read_line(&mut email)
         .expect("Failed to read line");
-    println!("Enter your login password");
-    std::io::stdin()
-        .read_line(&mut password)
-        .expect("Failed to read line");
+
+    let mut password = rpassword::prompt_password_stdout("Enter your login password\n").expect("Failed to read password");
+
     email = email.trim().to_string();
     password = password.trim().to_string();
     println!("Logging in {:?} !", email);
